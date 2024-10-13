@@ -30,13 +30,15 @@ public class SecurityConfigure {
    public UserDetailsService userDetailsService(){
       UserDetails user = User.builder()
                               .username("user")          //아이디
-                              .password("1234")          //패스워드
+                              .password(passwordEncoder().encode("1234"))
+                              /* .password("1234")          //패스워드 */
                               .roles("USER")             //권한
                               .build();
 
       UserDetails admin = User.builder()
                               .username("admin")         //아이디
-                              .password("1234")          //패스워드
+                              .password(passwordEncoder().encode("1234"))
+                              // .password("1234")          //패스워드
                               .roles("USER","ADMIN")     //권한
                               .build();
 
