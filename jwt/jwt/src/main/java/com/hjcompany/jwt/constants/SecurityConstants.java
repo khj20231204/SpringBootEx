@@ -3,7 +3,7 @@ package com.hjcompany.jwt.constants;
 //Security 및 JWT와 관련된 상수를 관리하는 클래스
 /*
  * HTTP
- *    headers : {
+ *    header : {
  *       Authoriztion : Bearer ${jwt}
  *    }
  */
@@ -14,7 +14,7 @@ public class SecurityConstants {
    public static final String TOKEN_HEADER = "Authorization"; 
 
    //헤더의 접두사
-   public static final String TOKEN = "Bearer ";
+   public static final String TOKEN_PREFIX = "Bearer ";
 
    //토큰 타입
    public static final String TOKEN_TYPE = "jwt";

@@ -6,6 +6,8 @@ import com.hjcompany.jwt.constants.SecurityConstants;
 import com.hjcompany.jwt.domain.AuthenticationRequest;
 import com.hjcompany.jwt.prop.JwtProp;
 
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
@@ -20,7 +22,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 
 
@@ -36,7 +37,7 @@ public class LoginController {
     [POST] - /login
     body : 
       {
-         "username" : "user",
+         "uid" : "user",
          "password" : "1234"
       }  
     */
@@ -45,12 +46,12 @@ public class LoginController {
    //AuthenticationRequest : domain에 정의한 클래스
    @PostMapping("login")
    public ResponseEntity<?> login(@RequestBody AuthenticationRequest request) { 
-       // /login 경로가 실행되면 AuthenticationRequest에 정의된 username, password로 request를 받는다
+       // /login 경로가 실행되면 AuthenticationRequest에 정의된 uid, password로 request를 받는다
 
-       String username = request.getUsername();
+       String uid = request.getUid();
        String password = request.getPassword();
 
-       log.info("username : " + username);
+       log.info("uid : " + uid);
        log.info("password : " + password);
 
       //사용자 권한
@@ -73,18 +74,17 @@ public class LoginController {
                         .header()   //Header 설정
                         .add("typ", SecurityConstants.TOKEN_TYPE) // "type" : "jwt"
                         .and()
-                        .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60*24*5)) //토큰 만료 시간 5일
-                        .claim("uid", username) //claim : 페이로드에 저장할 값
+                        .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60*24*5)) //토큰 만료 시간 5일 1000(1초)*60(1분)*60(1시간)*24(하루)*5(5일)
+                        .claim("uid", uid) //claim : 페이로드에 저장할 값
                         .claim("rol", roles) //claim : 페이로드에 저장할 값
+                        .claim("mymake", "mymakeValue")
+                        .claim("uid2", uid)
                         .compact();  //토큰 생성 메소드
-                        
-      log.info("jwt:"+jwt);
-
       /*
          HEADER 
          {
             "typ": "jwt",
-            "alg": "HS256"
+            "alg": "HS512"
          }
         
         PAYLOAD:DATA
@@ -97,21 +97,45 @@ public class LoginController {
             ]
          }
        */
+      log.info("jwt:"+jwt);
 
       return new ResponseEntity<String>(jwt, HttpStatus.OK);
    }
 
    //토큰 해석
    @GetMapping("/user/info")
-   public ResponseEntity<?> userInfo(@RequestHeader(name="Authorization") String header) {
-
+   public ResponseEntity<?> userINfo(@RequestHeader(name="Authorization") String header) {
+      //http헤더 부분의 Authorization을 header 변수에 담는다
+      
       log.info("==========header==========");
       log.info("Authorization : " + header);
 
-      // Authorization : Bearer : {jwt}
+      //Authorization : Bearer : {jwt}
+      //header.replace("Bearer ", "");
+      String jwt = header.replace(SecurityConstants.TOKEN_PREFIX, "");
       
+      byte[] stringKey = jwtProp.getSecretKey().getBytes();
 
-       return 
+      log.info("/user/info jwt : " + jwt);
+
+      //토큰 해석
+      Jws<Claims> parsedTokens = Jwts.parser() //Jwts의 parser를 통해서 토큰을 해석하겠다
+                                    .verifyWith(Keys.hmacShaKeyFor(stringKey)) //시크릿 키를 알려주고 
+                                    .build()
+                                    .parseSignedClaims(jwt); //토큰을 주고 , parse:변환하겠다, SignedClaims:암호화된 Claims를 
+
+      log.info("parsedTokens : " + parsedTokens);
+
+      //username : user
+      String uid = parsedTokens.getPayload().get("uid").toString();
+      log.info("uid : " + uid);
+
+      // rol : [ROLE_USER, ROLE_AMDIN]
+      Claims claim = parsedTokens.getPayload();
+      Object roles = claim.get("rol");
+      log.info("roles : " + roles);
+
+      return new ResponseEntity<String>(parsedTokens.toString(), HttpStatus.OK);
    }
    
 }
