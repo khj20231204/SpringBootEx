@@ -113,6 +113,7 @@ public class LoginController {
       //Authorization : Bearer : {jwt}
       //header.replace("Bearer ", "");
       String jwt = header.replace(SecurityConstants.TOKEN_PREFIX, "");
+      /* String jwt = header.replace(" Bearer ", "==============="); */
       
       byte[] stringKey = jwtProp.getSecretKey().getBytes();
 
