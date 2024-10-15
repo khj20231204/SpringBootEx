@@ -1,0 +1,14 @@
+{
+   "configurations": [
+      {
+         "type": "java",
+         "name": "Spring Boot-ConnectmysqlApplication<connectmysql>",
+         "request": "launch",
+         "cwd": "${workspaceFolder}",
+         "mainClass": "com.hjcompany.connectmysql.ConnectmysqlApplication",
+         "projectName": "connectmysql",
+         "args": "",
+         "envFile": "${workspaceFolder}/.env"
+      }
+   ]
+}

@@ -1,0 +1,22 @@
+# spring:
+#  application:
+#    name: connectmysql
+#  datasource:
+#    driver-class-name: com.mysql.cj.jdbc.Driver
+#    url: jdbc:mysql://localhost:3306/jsptest?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+#    username: jspid
+#    password: jsppass
+#  thymeleaf:
+#    cache: false
+
+
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: jspid
+    url: jdbc:mysql://localhost:3306/jsptest
+    password: jsppass
+  application:
+    name: connectmysql
+  thymeleaf:
+    cache: 'false'
