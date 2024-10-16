@@ -1,21 +1,14 @@
 package com.hjcompany.connectmysql_ex.controller;
 
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
 public class BoardController {
 
-   @RequestMapping("/boardform")
-	public String main() {
-		System.out.println("HomeController 실행");
-		return "boardform";
+  // 게시판 글쓰기 폼 
+	@RequestMapping(value = "/board_write")
+	public String board_write() {
+		return "board/board_write";
 	}
-
-	@GetMapping("/")
-    public String home() {
-        System.out.println("HomeController 실행");
-        return "boardform";
-    }
 }
