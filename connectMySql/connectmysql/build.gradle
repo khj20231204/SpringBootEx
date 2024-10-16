@@ -24,7 +24,21 @@ repositories {
 	mavenCentral()
 }
 
+//mysql (spring boot 2.7.8 이후)
+//runtimeOnly 'com.mysql:mysql-connector-j'
+//mysql (spring boot 2.7.8 이전)
+//runtimeOnly 'com.mysql:mysql-connector-java'
+
+
 dependencies {
+   //MySql
+	implementation 'mysql:mysql-connector-java:8.0.33'
+   //MyBatis
+   implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:2.2.0'
+   // jsp
+	implementation 'org.apache.tomcat.embed:tomcat-embed-jasper'
+	// jakarta jstl
+	implementation 'org.glassfish.web:jakarta.servlet.jsp.jstl:3.0.0'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
@@ -32,8 +46,6 @@ dependencies {
 	providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-	//MySql
-	implementation 'mysql:mysql-connector-java:8.0.33'
 }
 
 tasks.named('test') {
