@@ -6,8 +6,6 @@
    <title>Document</title>
 </head>
 <body>
-   <script>
-		location.href="getList";
-	</script>
+   <h1>get List</h1>
 </body>
 </html>

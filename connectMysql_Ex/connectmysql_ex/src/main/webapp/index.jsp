@@ -8,7 +8,7 @@
 </head>
 <body>
 	<script>
-		location.href="boardfrom";
+		location.href="getList";
 	</script>
 </body>
 </html>

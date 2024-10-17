@@ -2,7 +2,7 @@ spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: jspid
-    url: jdbc:mysql://localhost3306/jsptest
+    url: jdbc:mysql://localhost:3306/jsptest
     #url: jdbc:mysql://localhost:3306/jsptest?characterEncoding=UTF-8&serverTimezone=UTC
     password: jsppass
   mvc:
@@ -16,5 +16,5 @@ server.port: 80
 
 # Mapper Xml Location
 #mybatis:
-  #mapper-locations: mybatis/mapper/*.xml
-  #config: mybatis/mybatis-config.xml
+  #config-location: classpath:mybatis-config.xml
+  #mapper-locations: classpath:mapper/**/*.xml
