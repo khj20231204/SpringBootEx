@@ -37,9 +37,8 @@ dependencies {
 	testImplementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter-test:3.0.3'
 	testImplementation 'org.springframework.security:spring-security-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-
-	implementation 'mysql:mysql-connector-java:8.0.33'
-	
+	// mysql
+	runtimeOnly 'com.mysql:mysql-connector-j'
 	// jwt 
 	implementation 'io.jsonwebtoken:jjwt-api:0.12.3'
 	runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.3'
