@@ -27,7 +27,6 @@
         <result property="auth" column="auth" />
     </resultMap>
 
-
     <!-- 회원 등록 -->
     <insert id="insert">
         INSERT INTO user( user_id, user_pw, name, email )
@@ -72,7 +71,6 @@
               ,email = #{email}
         WHERE user_id = #{userId}
     </update>
-
 
     <!-- 회원 삭제 -->
     <delete id="delete">
