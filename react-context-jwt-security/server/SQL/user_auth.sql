@@ -1,3 +1,4 @@
+-- Active: 1729210488806@@127.0.0.1@3306@membersdb
 
 -- USER_AUTH : 권한 테이블
 
@@ -15,3 +16,11 @@ INSERT INTO USER_AUTH(USER_ID, AUTH) VALUES('ADMIN', 'ROLE_ADMIN');
 INSERT INTO USER_AUTH(USER_ID, AUTH) VALUES('ADMIN', 'ROLE_USER');
 
 SELECT * FROM user_auth;
+
+
+
+
+
+
+
+DELETE FROM user_auth;

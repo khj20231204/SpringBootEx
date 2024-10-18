@@ -1,5 +1,8 @@
-package com.joeun.server.dto;
+package com.hjcompany.server.dto;
 
+import lombok.Data;
+
+@Data
 public class UserAuth {
    
    private int authNo;
