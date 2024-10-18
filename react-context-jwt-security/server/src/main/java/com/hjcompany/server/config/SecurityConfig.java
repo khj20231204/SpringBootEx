@@ -2,6 +2,7 @@ package com.hjcompany.server.config;
 
 import java.util.logging.Filter;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -11,6 +12,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
+import com.hjcompany.server.security.custom.CustomUserDetailService;
+
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -18,7 +21,10 @@ import lombok.extern.slf4j.Slf4j;
 @EnableWebSecurity
 public class SecurityConfig {
    
-   //시쿠리티 설정
+   @Autowired
+   private CustomUserDetailService customUserDetailService;
+
+   //시큐리티 설정
    @Bean
    public SecurityFilterChain securityFilerChain(HttpSecurity http) throws Exception{
       log.info("시큐리티 설정");
@@ -48,7 +54,7 @@ public class SecurityConfig {
       */
 
       //인증 방식 설정
-      http.userDetailsService(null)
+      http.userDetailsService(customUserDetailService);
 
       return http.build();
    }

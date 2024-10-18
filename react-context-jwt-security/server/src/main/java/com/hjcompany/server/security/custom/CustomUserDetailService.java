@@ -6,10 +6,20 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import com.hjcompany.server.dto.CustomUser;
 import com.hjcompany.server.dto.Users;
 import com.hjcompany.server.mapper.UserMapper;
 
 import lombok.extern.slf4j.Slf4j;
+
+// CustomUser -> CustomUserDetailService -> SecurityConfig
+/*
+ * CustomUserDetailService의 역할 :
+ * 스프링 시큐리티가 사용자 정보를 읽어들일 때 사용하는 클래스로 설정.
+ * 시큐리티가 AuthenticationManager(인증 관리자)가 authenticate메소드를 호출하면
+ * 인증처리로 넘어가게 되는데 인증을 하려면 사용자 정보가 필요하다. 이때 이 로직이 실행되어서
+ * 데이터 베이스에 있는 아이디, 패스워드 값과 다른 요청값을 비교하게 된다.
+ */
 
 @Slf4j
 @Service
@@ -33,6 +43,11 @@ public class CustomUserDetailService implements UserDetailsService {
 
       log.info("users : " + users.toString());
 
-      //인증된 사용자 정보를 관리하는 객체
+      //Users -> CustomUser
+      CustomUser customUser = new CustomUser(users);
+
+      log.info("customUser : " + customUser.toString());
+
+      return customUser;
    }
 }
