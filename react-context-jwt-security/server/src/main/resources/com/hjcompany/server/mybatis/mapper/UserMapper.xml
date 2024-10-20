@@ -3,7 +3,7 @@
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.aloha.jwt_security.mapper.UserMapper">
+<mapper namespace="com.hjcompany.server.mapper.UserMapper">
 
     <!-- Users 매핑-->
     <resultMap type="Users" id="userMap">
@@ -41,19 +41,19 @@
     </select>
 
     <!-- 회원 조회 - id -->
-        
+    <select id="login" resultMap="userMap">
         SELECT u.no
-              ,u.user_id
-              ,user_pw
-              ,name
-              ,email
-              ,enabled
-              ,reg_date
-              ,upd_date
-              ,auth
+            ,u.user_id
+            ,user_pw
+            ,name
+            ,email
+            ,enabled
+            ,reg_date
+            ,upd_date
+            ,auth
         FROM user u LEFT OUTER JOIN user_auth auth 
-                    ON u.user_id = auth.user_id
-        WHERE u.user_id = #{userId}
+        ON u.user_id = auth.user_id
+        WHERE u.user_id = #{username}
     </select>
 
     <!-- 회원 권한 등록 -->

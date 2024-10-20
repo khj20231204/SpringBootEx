@@ -26,10 +26,11 @@ public class CustomUser implements UserDetails {
 
    private Users user;
 
-   public CustomUser(Users users){
+   public CustomUser(Users user){
+      System.out.println("CustomUser.java의 생성자");
       log.info("CustomUser.java의 생성자");
 
-      this.user = users;
+      this.user = user;
    }
 
    /**

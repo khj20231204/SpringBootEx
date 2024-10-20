@@ -53,7 +53,8 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         // JWT
         // Bearer + ${jwt} ➡ "Bearer " 제거
         String jwt = header.replace(JwtConstants.TOKEN_PREFIX, "");
-        
+        System.out.println("JwtRequestFilter jwt:"+jwt);
+
         // 토큰을 사용하여 Authentication 객체 생성
         Authentication authentication = jwtTokenProvider.getAuthentication(jwt);
 
