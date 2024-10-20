@@ -31,9 +31,13 @@ public class CustomUserDetailService implements UserDetailsService {
    //username(사용자 아이디)으로 사용자 정보를 읽어오는 메소드
    @Override
    public UserDetails loadUserByUsername(String username) {
+      log.info("CustomUserDetailService.java의 loadUserByUsername 메소드");
+      
       log.info("login - loadUserByUsername 클래스 : " + username);
 
       Users users = userMapper.login(username);
+
+      System.out.println("userMapper : " + users);
 
       if(users == null){ //없는 사용자로 로그인 요청을 보낸 경우
          log.info("사용자 없음.. (일치하는 아이디가 없습니다)");

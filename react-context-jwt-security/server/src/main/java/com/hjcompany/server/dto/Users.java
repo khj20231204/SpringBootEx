@@ -26,6 +26,7 @@ public class Users {
    }
 
    public Users(Users user){
+      
       this.no = user.getNo();
       this.userId = user.getUserId();
       this.userPw = user.getUserPw();

@@ -37,6 +37,8 @@ public class UserServiceImpl implements UserService {
 
    @Override
    public int insert(Users users) throws Exception {
+
+      log.info("UserServiceImpl.java의 insert 메소드");
       
       //비밀번호 암호화
       String userPw = users.getUserPw();
@@ -60,6 +62,9 @@ public class UserServiceImpl implements UserService {
    //회원 조회
    @Override
    public Users select(int userNo) throws Exception {
+
+      log.info("UserServiceImpl.java의 select 메소드");
+
       return userMapper.select(userNo);
    }
 
@@ -67,6 +72,9 @@ public class UserServiceImpl implements UserService {
    /* HttpServletRequest requset : 클라이언트로부터 요청이 일어났을 때 넘겨받는 request */
    @Override
    public void login(Users user, HttpServletRequest requset) throws Exception {
+
+      log.info("UserServiceImpl.java의 login 메소드");
+
       String username = user.getUserId();
       String passsword = user.getUserPw();
 
@@ -121,6 +129,7 @@ public class UserServiceImpl implements UserService {
    //회원 정보 수정
    @Override
    public int update(Users users) throws Exception {
+
       //비밀번호 암호화
       String userPw = users.getUserPw();
       /* String encodedPw = passwordEncoder.encode(userPw);

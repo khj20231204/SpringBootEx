@@ -8,6 +8,8 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 
 /*
  * CustomUser : 사용자 정보의 dto인 Users를 스프링 시큐리티에 맞는 형식으로 만들어서 넘겨줘야 하는데
@@ -17,12 +19,17 @@ import org.springframework.security.core.userdetails.UserDetails;
  * UserDetails형식으로 CustomerUser를 리턴하기 위해선 CustomerUser가 UserDetails를 상속받아야 한다.
  *
  */
+
+@Slf4j
+@Data
 public class CustomUser implements UserDetails {
 
-   private Users myusers;
+   private Users user;
 
    public CustomUser(Users users){
-      this.myusers = users;
+      log.info("CustomUser.java의 생성자");
+
+      this.user = users;
    }
 
    /**
@@ -31,8 +38,11 @@ public class CustomUser implements UserDetails {
     */
    @Override
    public Collection<? extends GrantedAuthority> getAuthorities() {
+
+      log.info("CustomUser.java의 getAuthorities 메소드");
+
       /* Users DTO의 List<UserAuth> authList */
-      List<UserAuth> authList = myusers.getAuthList();
+      List<UserAuth> authList = user.getAuthList();
 
       /* Users에서 가져온 authList에는 auth_no, user_id, auth가 있는 스프링 시큐리티가 필요로 하는 건 auth밖에 없다. 그래서 가져온 authList에서 스트림으로 auth만 뽑는다 */
       //SimpleGrantedAuthority() - "ROLE_USER"
@@ -44,12 +54,12 @@ public class CustomUser implements UserDetails {
 
    @Override
    public String getPassword() {
-      return myusers.getUserPw();
+      return user.getUserPw();
    }
 
    @Override
    public String getUsername() {
-      return myusers.getUserId();
+      return user.getUserId();
    }
 
    /* 밑에 메소드로 권한을 얻어 올 수 있고, 락을 확인 할 수도 있는데 
@@ -72,7 +82,7 @@ public class CustomUser implements UserDetails {
 
    @Override
    public boolean isEnabled() {
-      return myusers.getEnabled() == 1 ? true : false;
+      return user.getEnabled() == 1 ? true : false;
    }
    
 }

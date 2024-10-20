@@ -1,18 +1,22 @@
 package com.hjcompany.server.config;
 
-import java.util.logging.Filter;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import com.hjcompany.server.security.custom.CustomUserDetailService;
+import com.hjcompany.server.security.jwt.filter.JwtAuthenticationFilter;
+import com.hjcompany.server.security.jwt.filter.JwtRequestFilter;
+import com.hjcompany.server.security.jwt.provider.JwtTokenProvider;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -24,10 +28,13 @@ public class SecurityConfig {
    @Autowired
    private CustomUserDetailService customUserDetailService;
 
+   @Autowired
+   private JwtTokenProvider jwtTokenProvider;
+
    //시큐리티 설정
    @Bean
    public SecurityFilterChain securityFilerChain(HttpSecurity http) throws Exception{
-      log.info("시큐리티 설정");
+      log.info("SecurityConfig.java securityFilerChain 메소드");
 
       //폼 기반 로그인 비활성화
       http.formLogin(login -> login.disable());
@@ -39,7 +46,7 @@ public class SecurityConfig {
       http.csrf(csrf -> csrf.disable());
 
       //필터 설정
-      http.addFilterAt(filter, atFilter).addFilterBefore(filter,beforeFilter);
+      http.addFilterAt(new JwtAuthenticationFilter(authenticationManager, jwtTokenProvider), UsernamePasswordAuthenticationFilter.class).addFilterBefore(new JwtRequestFilter(authenticationManager, jwtTokenProvider),UsernamePasswordAuthenticationFilter.class);
 
       //인가 설정
       http.authorizeHttpRequests((auth) -> auth
@@ -62,6 +69,19 @@ public class SecurityConfig {
    //암호화 알고리즘 방식 : Bcrypt
    @Bean
    public PasswordEncoder passwordEncoder(){
+      log.info("SecurityConfig.java의 PasswordEncoder 메소드");
+
       return new BCryptPasswordEncoder();
+   }
+
+   //AuthenticationManager 빈 등록
+   private AuthenticationManager authenticationManager;
+
+   @Bean
+   public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception{
+      log.info("SecurityConfig.java의 authenticationManager 메소드");
+
+      this.authenticationManager = authenticationConfiguration.getAuthenticationManager();
+      return authenticationManager;
    }
 }
