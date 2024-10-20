@@ -1,4 +1,4 @@
-package com.example.demo.configuration;
+package com.hjcompany.configuration;
 
 import javax.sql.DataSource;
 
