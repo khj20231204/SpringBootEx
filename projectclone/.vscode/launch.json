@@ -1,0 +1,14 @@
+{
+   "configurations": [
+      {
+         "type": "java",
+         "name": "Spring Boot-ProjectboardApplication<projectboard>",
+         "request": "launch",
+         "cwd": "${workspaceFolder}",
+         "mainClass": "com.example.controllerexercise2.ProjectboardApplication",
+         "projectName": "projectboard",
+         "args": "",
+         "envFile": "${workspaceFolder}/.env"
+      }
+   ]
+}
