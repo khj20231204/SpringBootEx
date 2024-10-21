@@ -1,6 +1,5 @@
 package com.hjcompany.server.security.jwt.filter;
 
-
 import java.io.IOException;
 
 import org.springframework.security.authentication.AuthenticationManager;
@@ -17,6 +16,12 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 
+/*
+ * jwt 토큰이 넘어왔을 때 작동해야하는 필터
+ * -> 토큰을 해석하는 역할의 필터
+ * OncePerRequestFilter : 한 요청당 한 번만 실행되는 필터
+ */
+
 @Slf4j
 public class JwtRequestFilter extends OncePerRequestFilter {
    
@@ -32,6 +37,12 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         this.jwtTokenProvider = jwtTokenProvider;
     }
         
+    
+   /*
+   jwt 요청 필터
+      - request > headers > Authorization에 들었는 토큰을 꺼낸다
+      - jwt 토큰 유효성 검사
+   */
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
@@ -46,10 +57,20 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         // Bearer + {jwt} 체크
         // 헤더가 없거나 형식이 올바르지 않으면 다음 필터로 진행
         if (header == null || header.length() == 0 || !header.startsWith(JwtConstants.TOKEN_PREFIX)) {
+            /*
+            토큰이 존재하지 않는다 -> 다음 필터로 넘긴다
+            filterChain.doFilter : 이 메서드를 호출하면 현재 필터를 포함하여 필터 체인에 등록된 모든 필터들이 순서대로 실행되도록 합니다.
+            */
+
             filterChain.doFilter(request, response);
             return;
         }
-
+        
+         /*
+         * 클라이언트 요청 -------> jwtRequest 필터 -------> jwtAuth 필터
+         * 토큰이 없는 경우 jwtRequest에서 jwtAut필터로 넘긴다
+         * 이 경우는 로그인을 요청한 경우로 로그인시 두 필터를 다 넘긴다
+         */
         // JWT
         // Bearer + ${jwt} ➡ "Bearer " 제거
         String jwt = header.replace(JwtConstants.TOKEN_PREFIX, "");

@@ -25,6 +25,8 @@ public class UserController {
    //@Autowired
    //private UserService userService;
 
+   //원래는 /users/10 이렇게 
+
    /*
     * 사용자 정보 조회 
     * @param customUser

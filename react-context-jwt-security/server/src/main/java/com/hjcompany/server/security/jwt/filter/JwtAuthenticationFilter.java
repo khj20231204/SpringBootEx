@@ -8,7 +8,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import com.hjcompany.server.dto.CustomUser;
@@ -21,108 +20,110 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 
+/*
+ * client -> filter(/login) -> server
+ * username, password로 인증 시도 : attemptAuthentication 실행
+ * 인증 성공하면 실행 : successfulAuthentication 실행
+ *  => JWT 생성 
+ *  => response > headers ? authorization : jwt저장
+ * 인증 실패 : response > status > 401
+ */
+
+//필터 생성 클래스
+//스프링 시큐리티와 연결이 되기 위해서 UsernamePasswordAuthenticationFilter를 상속
 @Slf4j
-public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
+public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter{
+   
+   /*
+   이런식으로 사용이 불가능하다
+   밑에 생성자로 가져와서 사용
 
-    private final AuthenticationManager authenticationManager;
-    private final JwtTokenProvider jwtTokenProvider;
+   @Autowired
+   private AuthenticationManager authenticationManager;
 
-    // 생성자
-    public JwtAuthenticationFilter( AuthenticationManager authenticationManager,  JwtTokenProvider jwtTokenProvider ) {
-        this.authenticationManager = authenticationManager;
-        this.jwtTokenProvider = jwtTokenProvider;
-        // 🔗 필터 URL 경로 설정 : /login
-        setFilterProcessesUrl(JwtConstants.AUTH_LOGIN_URL);
-    }
+   @Autowired
+   JwtTokenProvider jwtTokenProvider;
+   */
 
+   private AuthenticationManager authenticationManager;
+   private JwtTokenProvider jwtTokenProvider;
 
-    /**
-     * 🔐 인증 시도 메소드
-     * : /login 경로로 (username, password) 를 요청하면 이 필터에서 걸려 인증을 시도합니다.
-     * ✅ Authentication 인증 시도한 사용자 인증 객체를 반환하여, 시큐리티가 인증 성공 여부를 판단하게 합니다.
-     * @param request
-     * @param response
-     * @return
-     * @throws AuthenticationException
-     */
-    @Override
-    public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response)
-            throws AuthenticationException {
-        
-        String username = request.getParameter("username");
-        String password = request.getParameter("password");
+   //생성자
+   public JwtAuthenticationFilter(AuthenticationManager authenticationManager, JwtTokenProvider jwtTokenProvider){
+      log.info("JwtAuthenticationFilter.java의 생성자");
 
-        log.info("username : " + username);
-        log.info("password : " + password);
+      this.authenticationManager = authenticationManager;
+      this.jwtTokenProvider = jwtTokenProvider;
 
-        // 사용자 인증정보 객체 생성
-        Authentication authentication = new UsernamePasswordAuthenticationToken(username, password);
-    
-        System.out.println("JwtAuthenticationFilter.java의 attemptAuthentication 메소드 안에 authentication:"+authentication);
+      //필터 url 경로 설정 : /login
+      setFilterProcessesUrl(JwtConstants.AUTH_LOGIN_URL);
+   }
 
-        System.out.println("======= JwtAuthenticationFilter 앞 =======");
-        // 사용자 인증 (로그인)
-        authentication = authenticationManager.authenticate(authentication);
-        System.out.println("======= JwtAuthenticationFilter 뒤 =======");
-        /*
-            🔐 authenticate() 인증 처리 프로세스
-            1️⃣ 주어진 Authentication 객체에서 사용자의 아이디를 추출합니다.
-            2️⃣ UserDetailsService를 사용하여 해당 아이디에 대한 UserDetails 객체를 가져옵니다.
-            3️⃣ 가져온 UserDetails 객체에서 저장된 비밀번호를 확인하기 위해 PasswordEncoder를 사용합니다.
-            4️⃣ 사용자가 제공한 비밀번호와 저장된 비밀번호가 일치하는지 확인합니다.
-            5️⃣ 인증이 성공하면, 새로운 Authentication 객체를 생성하여 반환합니다.
-            ✅ 인증 여부를, isAuthenticated() ➡ true 로 확인할 수 있습니다.
-         */
+   /* 
+   요청이 오면 필터를 통해 거르게 되는데 attemptAuthentication에서 /login 경로로만 요청이 왔을 때 거르는 기능으로 설정,
+   request에서 사용자 정보를 가져와 인증을 하는 기능까지 작성
+   : /login 경로로 요청하면, 필터로 걸러서 인증을 시도
+    */
+   //인증 시도 필터 메소드
+   @Override
+   public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response)
+         throws AuthenticationException {
 
-        log.info("authenticationManager : " + authenticationManager);
-        log.info("authentication : " + authentication);
-        log.info("인증 여부(isAuthenticated) : " + authentication.isAuthenticated());
+      log.info("JwtAuthenticationFilter.java의  attemptAuthentication 메소드");
 
-        // 인증 실패 (username, password 불일치)
-        if( !authentication.isAuthenticated() ) {
-            log.info("인증 실패 : 아이디와 비밀번호가 일치하지 않습니다.");
-            response.setStatus(401);
-        }
+      String username = request.getParameter("username");
+      String password = request.getParameter("password");
 
-        return authentication;
-    }
+      log.info("JwtAuthenticationFilter username : " + username);
+      log.info("JwtAuthenticationFilter password : " + password);
 
+      //사용자 인증정보 객체 생성
+      //아이디와 비번이 있으면 토큰을 만들 수 있다
+      Authentication authentication = new UsernamePasswordAuthenticationToken(username, password);
 
-    /**
-     * ⭕ 인증 성공 메소드
-     * : attemptAuthentication() 호출 후, 반환된 Authentication - 사용자 인증 객체가 인증된 것이 확인되면, 호출됩니다.
-     * 
-     * ➡ 🔐 JWT
-     * : 로그인 인증에 성공했으므로, JWT 토큰을 생성하여 
-     *   응답(response) 헤더에 jwt 토큰을 담아 응답합니다.
-     *   💍 { Authorization : Bearer + {jwt} } 
-     * @param request
-     * @param response
-     * @param chain
-     * @param authentication
-     * @throws IOException
-     * @throws ServletException
-     */
-    @Override
-    protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain,
-            Authentication authentication) throws IOException, ServletException {
-        log.info("인증 성공 (auth SUCCESS) : ");
+      //사용자 인증 (로그인) - 위에서 만든 authentication 토큰으로 사용자 인증 진행
+      /*
+       * authenticationManager : SecurityConfig.java에서 빈으로 등록
+       */
+      authentication = authenticationManager.authenticate(authentication);
 
-        CustomUser user = ((CustomUser) authentication.getPrincipal());
-        int userNo = user.getUser().getNo();
-        String userId = user.getUser().getUserId();
+      log.info("인증 여부:"+ authentication.isAuthenticated());
 
-        List<String> roles = user.getAuthorities()
-                                .stream()
-                                .map(GrantedAuthority::getAuthority)
-                                .collect(Collectors.toList());
+      //인증 실패 (username, password 불일치)
+      if(!authentication.isAuthenticated()){
+         log.info("인증 실팽 : 아이디 또는 비밀번호가 일치하지 않습니다.");
+         response.setStatus(401);
+      }
 
-        // 🔐 JWT
-        String token = jwtTokenProvider.createToken(userNo, userId, roles);
+      return authentication; //authentication이 인증이 되면 밑에 successfulAuthentication가 호출 됨
+   }
 
-        // 💍 { Authorization : Bearer + {jwt} } 
-        response.addHeader(JwtConstants.TOKEN_HEADER, JwtConstants.TOKEN_PREFIX + token);
-        response.setStatus(200);
-    }
+   /*
+   인증이 성공 됐을 때 실행될 메소드
+   - JWT을 생성
+   - JWT를 응답 헤더에 설정
+   */
+   @Override
+   protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain,
+         Authentication authentication) throws IOException, ServletException {
+         
+         log.info("JwtAuthenticationFilter.java의 successfulAuthentication 메소드");
 
+         log.info("인증 성공");
+
+         CustomUser user = (CustomUser) authentication.getPrincipal();
+         int userNo = user.getUser().getNo();
+         String userId = user.getUser().getUserId();
+
+         List<String> roles = user.getUser().getAuthList().stream()
+                              .map((auth) -> auth.getAuth())
+                              .collect(Collectors.toList());
+
+         // JWT                              
+         String jwt = jwtTokenProvider.createToken(userNo, userId, roles);
+
+         // {Authentication : Bearer + {jwt} }
+         response.addHeader(JwtConstants.TOKEN_HEADER, JwtConstants.TOKEN_PREFIX + jwt);
+         response.setStatus(200);
+   }
 }
