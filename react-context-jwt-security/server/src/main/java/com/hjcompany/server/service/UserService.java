@@ -1,9 +1,12 @@
 package com.hjcompany.server.service;
 
+import org.springframework.stereotype.Service;
+
 import com.hjcompany.server.dto.Users;
 
 import jakarta.servlet.http.HttpServletRequest;
 
+@Service
 public interface UserService {
    
     // 회원 등록

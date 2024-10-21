@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -20,10 +21,14 @@ import com.hjcompany.server.security.jwt.provider.JwtTokenProvider;
 
 import lombok.extern.slf4j.Slf4j;
 
+/* @EnableMethodSecurity(prePostEnabled=true, securedEnabled=true)
+ * prePostEnable : 메서드 실행 전, 후 에 권한 검사를 수행   
+ * securedEnabled : @secured 어노테이션을 이용하여 메서드에 대한 접근 권한을 제어   
+ */
 @Slf4j
 @Configuration
 @EnableWebSecurity
-//@EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true) //어노테이션에 prePostEnabled = true를 추가하면 AuthenticationManager를 자동으로 구성합니다.
+@EnableMethodSecurity(prePostEnabled=true, securedEnabled=true)
 public class SecurityConfig {
    
    @Autowired
@@ -52,7 +57,7 @@ public class SecurityConfig {
       //인가 설정
       http.authorizeHttpRequests((auth) -> auth
          .requestMatchers("/admin/**").hasRole("ADMIN")
-         .requestMatchers("/user/**").hasAnyRole("USER","ADMIN")
+         .requestMatchers("/users/**").permitAll() //이미 controller에서 secured로 체크를 하니깐 permitall() 한다.
          .requestMatchers("/", "/login").permitAll()
          .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll() 
          .anyRequest().authenticated());
