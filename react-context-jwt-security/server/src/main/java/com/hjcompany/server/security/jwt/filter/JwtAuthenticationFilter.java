@@ -80,6 +80,8 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
       //사용자 인증정보 객체 생성
       //아이디와 비번이 있으면 토큰을 만들 수 있다
       Authentication authentication = new UsernamePasswordAuthenticationToken(username, password);
+      /* CustomUserDetailService.java로 넘어간다
+      CustomUserDetailService의 역할 : 스프링 시큐리티가 사용자 정보를 읽어들일 때 사용하는 클래스로 설정 */
 
       //사용자 인증 (로그인) - 위에서 만든 authentication 토큰으로 사용자 인증 진행
       /*

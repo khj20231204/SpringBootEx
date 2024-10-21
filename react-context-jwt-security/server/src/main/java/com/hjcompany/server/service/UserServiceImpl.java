@@ -6,6 +6,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.stereotype.Service;
 
@@ -20,7 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 public class UserServiceImpl implements UserService {
 
-   /* @Autowired
+    @Autowired
    private PasswordEncoder passwordEncoder; //비밀번호 암호화 */
 
    @Autowired
@@ -42,8 +43,8 @@ public class UserServiceImpl implements UserService {
       
       //비밀번호 암호화
       String userPw = users.getUserPw();
-      /* String encodePw = passwordEncoder.encode(userPw);
-      users.setUserPw(encodePw); */
+      String encodePw = passwordEncoder.encode(userPw);
+      users.setUserPw(encodePw); 
 
       //회원 등록
       int result = userMapper.insert(users);

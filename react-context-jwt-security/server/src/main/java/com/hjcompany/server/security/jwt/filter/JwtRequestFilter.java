@@ -58,11 +58,15 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         // 헤더가 없거나 형식이 올바르지 않으면 다음 필터로 진행
         if (header == null || header.length() == 0 || !header.startsWith(JwtConstants.TOKEN_PREFIX)) {
             /*
-            토큰이 존재하지 않는다 -> 다음 필터로 넘긴다
+            토큰이 존재하지 않는다 
+            1.회원가입을 하지 않은 회원
+            2.회원가입은 했는데 로그인은 하지 않은 회원
+            -> 다음 필터로 넘긴다
             filterChain.doFilter : 이 메서드를 호출하면 현재 필터를 포함하여 필터 체인에 등록된 모든 필터들이 순서대로 실행되도록 합니다.
             */
-
+            log.info("----------------------doFilterInternal의 doFilter 전 --------------------------------");
             filterChain.doFilter(request, response);
+            log.info("----------------------doFilterInternal의 doFilter 후 --------------------------------");
             return;
         }
         

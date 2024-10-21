@@ -40,7 +40,7 @@ public class UserController {
       [GET 조회]        /users/info    - 회원정보 조회   (ROLE_USER)
       [POST 생성]       /users         - 회원가입        ALL
       [PUT 업데이트]    /users         - 회원정보 수정   (ROLE_USER) 
-      [DELETE 삭제]     /users         - 회원탈퇴        (ROLE_ADMIN)
+      [DELETE 삭제]     /users/{아이디}         - 회원탈퇴        (ROLE_ADMIN)
    */
 
    /*
@@ -51,7 +51,7 @@ public class UserController {
    @Secured("ROLE_USER") //USER 권한 설정
    @GetMapping("/info")
    public ResponseEntity<?> userInfo(@AuthenticationPrincipal CustomUser customUser) {
-      log.info("UserController.java");
+      log.info("UserController.java - userInfo 주소 /info");
       log.info("customUser : " + customUser);
 
       Users user = customUser.getUser();
@@ -67,10 +67,11 @@ public class UserController {
    }
     
    //회원가입
-   @PostMapping("") //회원가입은 누구나 들어와야 하기 때문에 따로 권한지정을 하지 않았다
+   @PostMapping("/join") //회원가입은 누구나 들어와야 하기 때문에 따로 권한지정을 하지 않았다
    public ResponseEntity<?> join(@RequestBody Users user) throws Exception {
-       
-      log.info("[post] - /users");
+      log.info("UserController.java - join 주소 /");
+
+      log.info("[post] - users : " + user);
       int result = userService.insert(user);
 
       if(result > 0){
@@ -86,8 +87,9 @@ public class UserController {
    //회원정보 수정
    @Secured("ROLE_USER") //USER 권한 설정
    /*SecurityConfig파일의 @EnableMethodSecurity(prePostEnabled=true, securedEnabled=true)securedEnabled 설정을 했기 때문에 사용가능*/
-   @PutMapping("")
+   @PutMapping("/update")
    public ResponseEntity<?> update(@RequestBody Users user) throws Exception {
+      log.info("UserController.java - update 주소 /");
 
       log.info("[put] - /users");
       int result = userService.update(user);
@@ -103,10 +105,11 @@ public class UserController {
    }
 
    //회원정보 탈퇴
-   @Secured("ROLE_ADMIN")
+   //@Secured("ROLE_ADMIN")
+   @Secured("ROLE_USER")
    @DeleteMapping("/{userId}")
    public ResponseEntity<?> destory(@PathVariable("userId") String userId) throws Exception{
-      log.info("[DELETE] - /users/{userId}");
+      log.info("UserController.java - destory 주소 /{userId}");
 
       int result = userService.delete(userId);
 
