@@ -20,8 +20,6 @@ import com.hjcompany.server.service.UserServiceImpl;
 
 import lombok.extern.slf4j.Slf4j;
 
-
-
 /**
  * JwtReuestFilter에서 이미 jwt 토큰 해석을 하고 유효한지 체크 후 SecurityContextHolder의 SecurityContext에 등록한 상태
  * 여기에 등록된 CustomUser를 AuthenticationPrincipal가 가져온다
