@@ -94,6 +94,7 @@ import lombok.extern.slf4j.Slf4j;
            
            // jwt 추출 
            String jwt = authHeader.replace(JwtConstants.TOKEN_PREFIX, "");
+            log.info("getAuthentication jwt:"+jwt);
 
            // JWT 파싱
            Jws<Claims> parsedToken = Jwts.parser()
@@ -165,7 +166,7 @@ import lombok.extern.slf4j.Slf4j;
            log.warn("Request to parse invalid JWT : {} failed : {}", authHeader, exception.getMessage());
        } catch (IllegalArgumentException exception) {
            log.warn("Request to parse empty or null JWT : {} failed : {}", authHeader, exception.getMessage());
-       }
+       } 
 
        return null;
    }

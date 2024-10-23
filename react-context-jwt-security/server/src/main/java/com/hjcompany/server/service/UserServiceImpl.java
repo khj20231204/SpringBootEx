@@ -133,8 +133,8 @@ public class UserServiceImpl implements UserService {
 
       //비밀번호 암호화
       String userPw = users.getUserPw();
-      /* String encodedPw = passwordEncoder.encode(userPw);
-      users.setUserPw(encodedPw); */
+      String encodedPw = passwordEncoder.encode(userPw);
+      users.setUserPw(encodedPw);
       
       int result = userMapper.update(users);
 

@@ -72,7 +72,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         
          /*
          * 클라이언트 요청 -------> jwtRequest 필터 -------> jwtAuth 필터
-         * 토큰이 없는 경우 jwtRequest에서 jwtAut필터로 넘긴다
+         * 토큰이 없는 경우 jwtRequest에서 jwtAuth필터로 넘긴다
          * 이 경우는 로그인을 요청한 경우로 로그인시 두 필터를 다 넘긴다
          */
         // JWT
