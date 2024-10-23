@@ -224,6 +224,7 @@ import lombok.extern.slf4j.Slf4j;
             log.error("Token is null");                 // 토큰 없음
             return false;
         } catch (Exception e) {
+            log.error(e.toString());
 	        return false;
 	    }
    }
